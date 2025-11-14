@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 2. 스크롤 리모컨 기능 끝 ---
 
 
-    // ======== ▼ 3. 팝업 기능  ▼ ========
+    // ======== ▼ 3. 팝업(모달) 기능 (제목 <br> 수정됨) ▼ ========
     const modalOverlay = document.querySelector('.modal-overlay');
     const modalCloseBtn = document.querySelector('.modal-close');
     const learnMoreButtons = document.querySelectorAll('.btn-more');
@@ -60,42 +60,46 @@ document.addEventListener('DOMContentLoaded', () => {
     // 팝업창 내부 요소
     const modalImage = document.getElementById('modal-image');
     const modalTitle = document.getElementById('modal-title');
-    const modalDescription = document.getElementById('modal-description');
+    const modalDescription = document.getElementById('modal-description'); 
 
     // "더 알아보기" 버튼들에 클릭 이벤트 추가
     learnMoreButtons.forEach(button => {
         button.addEventListener('click', (e) => {
-            e.preventDefault(); // a 태그의 기본 동작(페이지 이동) 막기
+            e.preventDefault(); 
 
-            // 1. 클릭된 버튼의 부모(.item-text)에서 정보 가져오기
             const itemText = e.target.closest('.item-text');
-            const title = itemText.querySelector('h2').innerHTML; // <br> 포함
-            const description = itemText.querySelector('p').textContent;
-
-            // 2. 클릭된 버튼의 형제(.item-image)에서 이미지 경로 가져오기
             const itemBox = e.target.closest('.tech-item');
-            const imageSrc = itemBox.querySelector('.item-image img').src;
 
-            // 3. 팝업창에 가져온 정보 채우기
-            modalTitle.innerHTML = title;
-            modalDescription.textContent = description + " (여기에 더 자세한 설명을 추가할 수 있습니다.)";
+            // 1. [수정됨] 제목을 가져올 때 <br>을 공백(' ')으로 바꿈
+            const titleHTML = itemText.querySelector('h2').innerHTML; // "AI...<br>완벽한..."
+            const titleWithSpace = titleHTML.replace(/<br\s*\/?>/gi, ' '); // "<br>" -> " "
+            const title = titleWithSpace.replace(/\s+/g, ' ').trim(); // "AI... 완벽한..."
+            
+            const imageSrc = itemBox.querySelector('.item-image img').src;
+            
+            // 2. 숨겨둔 상세 내용(.modal-detail-content)의 HTML을 가져옴
+            const detailHTML = itemText.querySelector('.modal-detail-content').innerHTML;
+
+            // 3. 팝업창에 정보 채우기
+            modalTitle.textContent = title; // 텍스트로 삽입
             modalImage.src = imageSrc;
+            modalDescription.innerHTML = detailHTML; 
 
             // 4. 팝업창 보이기
             modalOverlay.classList.add('active');
         });
     });
 
-    // 닫기 버튼 클릭 시 팝업창 숨기기
+    // 닫기 버튼
     modalCloseBtn.addEventListener('click', () => {
         modalOverlay.classList.remove('active');
     });
 
-    // 팝업창 바깥의 어두운 영역 클릭 시 숨기기
+    // 바깥 영역 클릭
     modalOverlay.addEventListener('click', (e) => {
         if (e.target === modalOverlay) {
             modalOverlay.classList.remove('active');
         }
     });
-    // ======== ▲ 추가 끝 ▲ ========
+    // ======== ▲ 수정 끝 ▲ ========
 });
